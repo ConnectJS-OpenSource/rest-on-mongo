@@ -1,20 +1,14 @@
-# Following https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md
+FROM node:16-alpine
 
-# Use the latest LTS node based on alpine linux distro
-FROM node:12-alpine
+WORKDIR /app
 
-# Create global installs in .npm-global in the default home directory
-ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
-ENV PATH=$PATH:/home/node/.npm-global/bin 
+COPY package*.json ./
+RUN npm i
+COPY . .
+ENV PORT = 80
+EXPOSE 80
+ENTRYPOINT node index.js
 
-# No working directory needed, as we don't use this at all. We directly
-# install from npm to ensure that we create dockers only of released versions.
 
-# Install the latest version of rest-on-mongo. There is little use for anything else.
-# Also, clean the npm cache to get rid of unwanted files within the image.
-RUN npm install -g rest-on-mongo@2.4.0 && npm cache --force clean
-
-ENTRYPOINT ["rest-on-mongo"]
-
-# This makes the process run as a non-root user (node user is builtin in the node docker)
-USER node
+#docker build . -t pitchnhire/mongo-rest:latest
+#docker push pitchnhire/mongo-rest:latest
